@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>薛定谔方程解析法 - 教学网站</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .nav-grid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-row {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .nav-row.top-row {
+            width: 60%;
+        }
+
+        .nav-row.bottom-row {
+            width: 100%;
+        }
+
+        .nav-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            flex: 1;
+            min-width: 180px;
+            max-width: 280px;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .nav-card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .nav-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .nav-card p {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8rem;
+        }
+
+        .close-btn {
+            font-size: 2rem;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .close-btn:hover {
+            opacity: 1;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            padding-left: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .section ol, .section ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .section li {
+            margin-bottom: 10px;
+            line-height: 1.8;
+        }
+
+        .equation-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .equation-box h5 {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            font-weight: normal;
+        }
+
+        .concept-map {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .concept-tag {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .concept-tag:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .interactive-area {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .interactive-area h5 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .slider-control {
+            margin: 20px 0;
+        }
+
+        .slider-control label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .slider-control input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+        }
+
+        .slider-control input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        .value-display {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        .canvas-container {
+            width: 100%;
+            min-height: 320px;
+            background: white;
+            border-radius: 10px;
+            margin-top: 20px;
+            position: relative;
+            border: 1px solid #eee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .canvas-container canvas {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .flow-chart {
+            display: grid;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .flow-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .flow-item h5 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .flow-item p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .sub-flow {
+            margin-left: 20px;
+            margin-top: 15px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .sub-flow .flow-item {
+            border-left-color: #764ba2;
+            padding: 15px;
+        }
+
+        .derivation-step {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .derivation-step h5 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .term-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 2000;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .term-modal.active {
+            display: block;
+        }
+
+        .term-modal h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .term-modal p {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .term-modal .close-term-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .term-modal .close-term-btn:hover {
+            background: #5569d0;
+        }
+
+        .energy-level-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: #e8f4fd;
+            border-radius: 10px;
+        }
+
+        .energy-level-info h6 {
+            color: #1e88e5;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .energy-level-info p {
+            color: #555;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .electron-cloud-container {
+            width: 100%;
+            height: 350px;
+            background: #1a1a2e;
+            border-radius: 10px;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+            cursor: grab;
+        }
+
+        .electron-cloud-container:active {
+            cursor: grabbing;
+        }
+
+        .electron-cloud-container canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .cloud-controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .cloud-controls button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .cloud-controls button:hover {
+            background: #5569d0;
+            transform: translateY(-2px);
+        }
+
+        .cloud-controls button.active {
+            background: #764ba2;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .modal-header h2 {
+                font-size: 1.4rem;
+            }
+
+            .nav-row {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-card {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .nav-row.top-row,
+            .nav-row.bottom-row {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>薛定谔方程解析法</h1>
+            <p>探索量子力学的核心方程及其应用</p>
+        </header>
+
+        <div class="nav-grid">
+            <div class="nav-row top-row">
+                <div class="nav-card" onclick="openModal('history')">
+                    <div class="nav-card-icon">📚</div>
+                    <h3>历史背景</h3>
+                    <p>了解薛定谔方程的发现历程和量子力学的发展</p>
+                </div>
+                <div class="nav-card" onclick="openModal('equation')">
+                    <div class="nav-card-icon">📐</div>
+                    <h3>方程构建</h3>
+                    <p>深入理解薛定谔方程的数学形式和物理意义</p>
+                </div>
+            </div>
+            <div class="nav-row bottom-row">
+                <div class="nav-card" onclick="openModal('simple')">
+                    <div class="nav-card-icon">🎯</div>
+                    <h3>简单应用</h3>
+                    <p>一维势阱、多维势阱的解析求解</p>
+                </div>
+                <div class="nav-card" onclick="openModal('comprehensive')">
+                    <div class="nav-card-icon">⚛️</div>
+                    <h3>综合应用</h3>
+                    <p>氢原子模型和量子化条件</p>
+                </div>
+                <div class="nav-card" onclick="openModal('modern')">
+                    <div class="nav-card-icon">💡</div>
+                    <h3>现代方法</h3>
+                    <p>有限差分、有限元、PINN等数值方法</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modal-title">标题</h2>
+                    <div class="close-btn" onclick="closeModal()">&times;</div>
+                </div>
+                <div class="modal-body" id="modal-body"></div>
+            </div>
+        </div>
+
+        <div class="term-modal" id="term-modal">
+            <h3 id="term-title">术语名称</h3>
+            <div id="term-content"></div>
+            <button class="close-term-btn" onclick="closeTermModal()">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        const conceptTerms = {
+            'planck': {
+                title: '普朗克常数',
+                content: `<p><strong>定义：</strong>普朗克常数\\( h \\)是量子力学中的基本常数，其值约为\\( 6.626 \\times 10^{-34} \\, \\text{J·s} \\)。</p>
+                         <p><strong>来源：</strong>1900年，马克斯·普朗克在研究黑体辐射时提出能量量子化假说，引入了这一常数。他假设能量以离散的"量子"形式存在，\\( E = h\\nu \\)，其中\\( \\nu \\)是频率。</p>
+                         <p><strong>意义：</strong>普朗克常数标志着经典物理学与量子物理学的分野，是量子力学的基石之一。约化普朗克常数\\( \\hbar = h/(2\\pi) \\)在量子力学中更为常用。</p>`
+            },
+            'debroglie': {
+                title: '德布罗意波',
+                content: `<p><strong>定义：</strong>德布罗意波，又称物质波，指所有微观粒子都具有波动性。</p>
+                         <p><strong>来源：</strong>1924年，路易·德布罗意在其博士论文中提出物质波假说，认为任何运动的粒子都具有波动性，波长\\( \\lambda = h/p \\)，其中\\( p \\)是粒子动量。</p>
+                         <p><strong>意义：</strong>这一假说揭示了微观粒子的波粒二象性，为薛定谔方程的建立奠定了基础，并被电子衍射实验所证实。</p>`
+            },
+            'uncertainty': {
+                title: '海森堡不确定性原理',
+                content: `<p><strong>定义：</strong>无法同时精确测量粒子的位置和动量，\\( \\Delta x \\cdot \\Delta p_x \\geq \\hbar/2 \\)。</p>
+                         <p><strong>来源：</strong>1927年，维尔纳·海森堡提出这一原理，揭示了微观世界的基本限制。</p>
+                         <p><strong>意义：</strong>不确定性原理是量子力学的核心原理之一，表明微观粒子的行为与经典粒子有本质区别。</p>`
+            },
+            'collapse': {
+                title: '波函数坍缩',
+                content: `<p><strong>定义：</strong>当对量子系统进行测量时，波函数会从叠加态瞬间"坍缩"到某一个本征态。</p>
+                         <p><strong>来源：</strong>这是量子力学哥本哈根诠释的核心概念，由玻尔和海森堡等人提出。</p>
+                         <p><strong>意义：</strong>波函数坍缩是量子测量的基本特征，体现了观察行为对量子系统的影响。</p>`
+            }
+        };
+
+        function openTermModal(termId) {
+            const term = conceptTerms[termId];
+            document.getElementById('term-title').textContent = term.title;
+            document.getElementById('term-content').innerHTML = term.content;
+            document.getElementById('term-modal').classList.add('active');
+            MathJax.typeset();
+        }
+
+        function closeTermModal() {
+            document.getElementById('term-modal').classList.remove('active');
+        }
+
+        const modalData = {
+            history: {
+                title: '历史背景',
+                content: `
+                    <div class="section">
+                        <h4>量子力学的诞生</h4>
+                        <p>20世纪初，经典物理学在解释微观现象时遇到了根本性的困难：</p>
+                        <ol>
+                            <li><strong>黑体辐射问题</strong>：经典理论预言紫外灾难，普朗克于1900年提出能量量子化假说</li>
+                            <li><strong>光电效应</strong>：爱因斯坦于1905年提出光子概念，解释了光的粒子性</li>
+                            <li><strong>原子结构</strong>：卢瑟福的核式模型无法解释原子稳定性，玻尔于1913年提出量子化轨道理论</li>
+                            <li><strong>物质波</strong>：德布罗意于1924年提出物质波假说，揭示微观粒子的波粒二象性</li>
+                        </ol>
+                    </div>
+                    <div class="section">
+                        <h4>薛定谔方程的提出</h4>
+                        <p>1926年，埃尔温·薛定谔在德布罗意物质波假说的基础上，提出了描述量子系统状态随时间演化的偏微分方程。这一方程与海森堡的矩阵力学等价，共同构成量子力学的数学基础。</p>
+                        <div class="equation-box">
+                            <h5>薛定谔方程的发现历程</h5>
+                            <p style="font-size: 0.9rem;">德布罗意关系 → 哈密顿-雅可比方程 → 薛定谔方程</p>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h4>波粒二象性与波函数诠释</h4>
+                        <p>薛定谔方程描述了微观粒子的波动性，波函数\\( \\psi(\\mathbf{r},t) \\)包含了粒子的所有信息。玻恩的统计诠释指出，\\( |\\psi|^2 d\\mathbf{r} \\)表示在空间微元\\( d\\mathbf{r} \\)内找到粒子的概率。</p>
+                    </div>
+                    <div class="section">
+                        <h4>核心概念</h4>
+                        <p>点击以下概念标签查看详细解释：</p>
+                        <div class="concept-map">
+                            <div class="concept-tag" onclick="openTermModal('planck')">普朗克常数</div>
+                            <div class="concept-tag" onclick="openTermModal('debroglie')">德布罗意波</div>
+                            <div class="concept-tag" onclick="openTermModal('uncertainty')">海森堡不确定性原理</div>
+                            <div class="concept-tag" onclick="openTermModal('collapse')">波函数坍缩</div>
+                        </div>
+                    </div>
+                `
+            },
+            equation: {
+                title: '方程构建',
+                content: `
+                    <div class="section">
+                        <h4>含时薛定谔方程的推导</h4>
+                        <div class="derivation-step">
+                            <h5>步骤1：从平面波出发</h5>
+                            <p>自由粒子的德布罗意波：\\( \\psi(\\mathbf{r},t) = A e^{i(\\mathbf{k} \\cdot \\mathbf{r} - \\omega t)} \\)</p>
+                            <p>其中\\( \\mathbf{k} = \\frac{\\mathbf{p}}{\\hbar} \\)，\\( \\omega = \\frac{E}{\\hbar} \\)</p>
+                        </div>
+                        <div class="derivation-step">
+                            <h5>步骤2：引入算符</h5>
+                            <p>动量算符：\\( \\hat{\\mathbf{p}} = -i\\hbar \\nabla \\)</p>
+                            <p>能量算符：\\( \\hat{E} = i\\hbar \\frac{\\partial}{\\partial t} \\)</p>
+                        </div>
+                        <div class="derivation-step">
+                            <h5>步骤3：建立波动方程</h5>
+                            <p>对平面波求时间导数：\\( i\\hbar \\frac{\\partial \\psi}{\\partial t} = \\hbar \\omega \\psi = E \\psi \\)</p>
+                            <p>对平面波求梯度的平方：\\( -\\hbar^2 \\nabla^2 \\psi = \\hbar^2 k^2 \\psi = p^2 \\psi \\)</p>
+                        </div>
+                        <div class="equation-box">
+                            <h5>含时薛定谔方程（一般形式）</h5>
+                            <p>\\( i\\hbar \\frac{\\partial \\psi}{\\partial t} = \\left( -\\frac{\\hbar^2}{2m} \\nabla^2 + V(\\mathbf{r},t) \\right) \\psi \\)</p>
+                        </div>
+                        <p>其中\\( \\hat{H} = -\\frac{\\hbar^2}{2m} \\nabla^2 + V(\\mathbf{r},t) \\)称为哈密顿算符。</p>
+                    </div>
+                    <div class="section">
+                        <h4>定态薛定谔方程</h4>
+                        <p>当势能\\( V(\\mathbf{r}) \\)不显含时间时，可采用分离变量法：\\( \\psi(\\mathbf{r},t) = \\psi(\\mathbf{r}) f(t) \\)</p>
+                        <div class="derivation-step">
+                            <h5>分离变量过程</h5>
+                            <p>代入含时方程得：\\( \\frac{i\\hbar}{f(t)} \\frac{df}{dt} = \\frac{1}{\\psi(\\mathbf{r})} \\hat{H} \\psi(\\mathbf{r}) = E \\)</p>
+                            <p>时间部分解：\\( f(t) = e^{-iEt/\\hbar} \\)</p>
+                        </div>
+                        <div class="equation-box">
+                            <h5>定态薛定谔方程</h5>
+                            <p>\\( \\hat{H} \\psi(\\mathbf{r}) = E \\psi(\\mathbf{r}) \\)</p>
+                        </div>
+                        <p>这是本征值方程，\\( E \\)为能量本征值，\\( \\psi(\\mathbf{r}) \\)为能量本征函数。</p>
+                    </div>
+                    <div class="section">
+                        <h4>波函数的物理条件</h4>
+                        <div class="flow-chart">
+                            <div class="flow-item">
+                                <h5>连续性</h5>
+                                <p>波函数及其一阶导数在空间中必须连续（除非势能有无限跳跃）</p>
+                                <p>\\( \\psi_1(x_0) = \\psi_2(x_0) \\)，\\( \\psi_1'(x_0) = \\psi_2'(x_0) \\)</p>
+                            </div>
+                            <div class="flow-item">
+                                <h5>有限性（归一化）</h5>
+                                <p>波函数在全空间积分必须有限</p>
+                                <p>\\( \\int |\\psi(\\mathbf{r})|^2 d\\mathbf{r} = 1 \\)</p>
+                            </div>
+                            <div class="flow-item">
+                                <h5>单值性</h5>
+                                <p>波函数在空间每一点只能有一个确定值</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            simple: {
+                title: '简单应用',
+                content: `
+                    <div class="section">
+                        <h4>一维无限深势阱</h4>
+                        <p>考虑一维空间中，粒子被限制在\\( 0 < x < L \\)区域内运动：</p>
+                        <div class="equation-box">
+                            <h5>势能函数</h5>
+                            <p>\\( V(x) = \\begin{cases} 0, & 0 < x < L \\\\ \\infty, & x \\leq 0 \\text{ 或 } x \\geq L \\end{cases} \\)</p>
+                        </div>
+                        <div class="derivation-step">
+                            <h5>步骤1：建立方程</h5>
+                            <p>阱内\\( V(x) = 0 \\)，薛定谔方程为：</p>
+                            <p>\\( -\\frac{\\hbar^2}{2m} \\frac{d^2 \\psi}{dx^2} = E \\psi \\)</p>
+                            <p>令\\( k^2 = \\frac{2mE}{\\hbar^2} \\)，方程变为：\\( \\frac{d^2 \\psi}{dx^2} + k^2 \\psi = 0 \\)</p>
+                        </div>
+                        <div class="derivation-step">
+                            <h5>步骤2：通解形式</h5>
+                            <p>方程的通解为：\\( \\psi(x) = A \\sin(kx) + B \\cos(kx) \\)</p>
+                        </div>
+                        <div class="derivation-step">
+                            <h5>步骤3：应用边界条件</h5>
+                            <p>在\\( x = 0 \\)处：\\( \\psi(0) = B = 0 \\)，故\\( \\psi(x) = A \\sin(kx) \\)</p>
+                            <p>在\\( x = L \\)处：\\( \\psi(L) = A \\sin(kL) = 0 \\)</p>
+                            <p>要求\\( \\sin(kL) = 0 \\)，即\\( kL = n\\pi \\)，\\( n = 1,2,3,\\cdots \\)</p>
+                        </div>
+                        <div class="derivation-step">
+                            <h5>步骤4：能量本征值</h5>
+                            <p>由\\( k = \\frac{n\\pi}{L} \\)，得：</p>
+                            <p>\\( E_n = \\frac{\\hbar^2 k^2}{2m} = \\frac{n^2 \\pi^2 \\hbar^2}{2mL^2} \\)</p>
+                        </div>
+                        <div class="derivation-step">
+                            <h5>步骤5：归一化</h5>
+                            <p>\\( \\int_0^L |\\psi_n(x)|^2 dx = |A|^2 \\int_0^L \\sin^2\\left(\\frac{n\\pi x}{L}\\right) dx = 1 \\)</p>
+                            <p>计算得\\( |A|^2 \\cdot \\frac{L}{2} = 1 \\)，故\\( A = \\sqrt{\\frac{2}{L}} \\)</p>
+                        </div>
+                        <div class="equation-box">
+                            <h5>归一化波函数</h5>
+                            <p>\\( \\psi_n(x) = \\sqrt{\\frac{2}{L}} \\sin\\left(\\frac{n\\pi x}{L}\\right) \\)</p>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h4>一维有限深势阱</h4>
+                        <p>考虑势能为：</p>
+                        <div class="equation-box">
+                            <h5>势能函数</h5>
+                            <p>\\( V(x) = \\begin{cases} -V_0, & |x| < a \\\\ 0, & |x| \\geq a \\end{cases} \\)</p>
+                        </div>
+                        <p>分区域求解：</p>
+                        <ol>
+                            <li><strong>阱内区域</strong>（\\( |x| < a \\)）：\\( \\frac{d^2 \\psi}{dx^2} + \\alpha^2 \\psi = 0 \\)，\\( \\alpha^2 = \\frac{2m(E + V_0)}{\\hbar^2} \\)</li>
+                            <li><strong>阱外区域</strong>（\\( |x| \\geq a \\)）：\\( \\frac{d^2 \\psi}{dx^2} - \\beta^2 \\psi = 0 \\)，\\( \\beta^2 = \\frac{2m|E|}{\\hbar^2} \\)</li>
+                        </ol>
+                        <p>利用对称性和边界条件，得到超越方程：\\( \\alpha \\tan(\\alpha a) = \\beta \\)（偶宇称）或\\( \\alpha \\cot(\\alpha a) = -\\beta \\)（奇宇称），需数值求解。</p>
+                    </div>
+                    <div class="section">
+                        <h4>多维势阱（分离变量法）</h4>
+                        <p>三维无限深方势阱：\\( V(x,y,z) = 0 \\)（\\( 0 < x < L_x, 0 < y < L_y, 0 < z < L_z \\)），\\( V = \\infty \\)（其他区域）</p>
+                        <div class="derivation-step">
+                            <h5>分离变量</h5>
+                            <p>设\\( \\psi(x,y,z) = X(x)Y(y)Z(z) \\)，代入薛定谔方程得三个独立的一维方程：</p>
+                            <p>\\( -\\frac{\\hbar^2}{2m} \\frac{d^2 X}{dx^2} = E_x X \\)</p>
+                            <p>\\( -\\frac{\\hbar^2}{2m} \\frac{d^2 Y}{dy^2} = E_y Y \\)</p>
+                            <p>\\( -\\frac{\\hbar^2}{2m} \\frac{d^2 Z}{dz^2} = E_z Z \\)</p>
+                            <p>其中\\( E = E_x + E_y + E_z \\)</p>
+                        </div>
+                        <div class="equation-box">
+                            <h5>能量本征值</h5>
+                            <p>\\( E_{n_x n_y n_z} = \\frac{\\pi^2 \\hbar^2}{2m} \\left( \\frac{n_x^2}{L_x^2} + \\frac{n_y^2}{L_y^2} + \\frac{n_z^2}{L_z^2} \\right) \\)</p>
+                        </div>
+                        <div class="equation-box">
+                            <h5>归一化波函数</h5>
+                            <p>\\( \\psi_{n_x n_y n_z}(x,y,z) = \\sqrt{\\frac{8}{L_x L_y L_z}} \\sin\\left(\\frac{n_x \\pi x}{L_x}\\right) \\sin\\left(\\frac{n_y \\pi y}{L_y}\\right) \\sin\\left(\\frac{n_z \\pi z}{L_z}\\right) \\)</p>
+                        </div>
+                    </div>
+                    <div class="interactive-area">
+                        <h5>🎮 势阱宽度对能级的影响</h5>
+                        <div class="slider-control">
+                            <label>势阱宽度 L: <span class="value-display" id="well-width">1.0</span> nm</label>
+                            <input type="range" id="width-slider" min="0.5" max="2" step="0.1" value="1">
+                        </div>
+                        <div class="canvas-container" id="well-canvas">
+                            <canvas id="wave-canvas"></canvas>
+                        </div>
+                        <div class="energy-level-info" id="energy-info">
+                            <h6>能级能量计算</h6>
+                            <p><span style="color: #e74c3c;">●</span> E₁ = <span id="energy-n1">0.376</span> eV</p>
+                            <p><span style="color: #2ecc71;">●</span> E₂ = <span id="energy-n2">1.504</span> eV</p>
+                            <p><span style="color: #3498db;">●</span> E₃ = <span id="energy-n3">3.384</span> eV</p>
+                        </div>
+                    </div>
+                `
+            },
+            comprehensive: {
+                title: '综合应用',
+                content: `
+                    <div class="section">
+                        <h4>氢原子模型</h4>
+                        <p>氢原子由质子和电子组成，电子在质子的库仑场中运动。采用球坐标系\\( (r, \\theta, \\phi) \\)。</p>
+                        <div class="equation-box">
+                            <h5>库仑势能</h5>
+                            <p>\\( V(r) = -\\frac{e^2}{4\\pi\\varepsilon_0 r} \\)</p>
+                        </div>
+                        <div class="derivation-step">
+                            <h5>步骤1：球坐标系下的薛定谔方程</h5>
+                            <p>拉普拉斯算符在球坐标系中的形式：</p>
+                            <p>\\( \\nabla^2 = \\frac{1}{r^2} \\frac{\\partial}{\\partial r} \\left( r^2 \\frac{\\partial}{\\partial r} \\right) + \\frac{1}{r^2 \\sin\\theta} \\frac{\\partial}{\\partial \\theta} \\left( \\sin\\theta \\frac{\\partial}{\\partial \\theta} \\right) + \\frac{1}{r^2 \\sin^2\\theta} \\frac{\\partial^2}{\\partial \\phi^2} \\)</p>
+                        </div>
+                        <div class="derivation-step">
+                            <h5>步骤2：分离变量</h5>
+                            <p>设\\( \\psi(r,\\theta,\\phi) = R(r) Y(\\theta,\\phi) \\)，进一步分离角向部分\\( Y(\\theta,\\phi) = \\Theta(\\theta) \\Phi(\\phi) \\)</p>
+                        </div>
+                        <div class="derivation-step">
+                            <h5>步骤3：角向方程的解</h5>
+                            <p>\\( \\Phi(\\phi) = \\frac{1}{\\sqrt{2\\pi}} e^{im_l \\phi} \\)，\\( m_l = 0, \\pm 1, \\pm 2, \\cdots, \\pm l \\)</p>
+                            <p>\\( \\Theta(\\theta) \\)为关联勒让德多项式：\\( \\Theta_{lm_l}(\\theta) = P_l^{|m_l|}(\\cos\\theta) \\)</p>
+                            <p>球谐函数：\\( Y_{lm_l}(\\theta,\\phi) = (-1)^{m_l} \\sqrt{\\frac{(2l+1)(l-m_l)!}{4\\pi(l+m_l)!}} P_l^{m_l}(\\cos\\theta) e^{im_l \\phi} \\)</p>
+                        </div>
+                        <div class="derivation-step">
+                            <h5>步骤4：径向方程</h5>
+                            <p>令\\( u(r) = r R(r) \\)，径向方程化为：</p>
+                            <p>\\( -\\frac{\\hbar^2}{2m} \\frac{d^2 u}{dr^2} + \\left[ V(r) + \\frac{l(l+1)\\hbar^2}{2mr^2} \\right] u = Eu \\)</p>
+                            <p>其中\\( \\frac{l(l+1)\\hbar^2}{2mr^2} \\)为离心势能。</p>
+                        </div>
+                        <div class="derivation-step">
+                            <h5>步骤5：能量量子化</h5>
+                            <p>通过求解径向方程，要求波函数在\\( r \\to \\infty \\)时有限，得到主量子数\\( n = 1,2,3,\\cdots \\)，且\\( l = 0,1,2,\\cdots,n-1 \\)</p>
+                        </div>
+                        <div class="equation-box">
+                            <h5>氢原子能量本征值</h5>
+                            <p>\\( E_n = -\\frac{me^4}{2(4\\pi\\varepsilon_0)^2 \\hbar^2 n^2} = -\\frac{13.6}{n^2} \\text{ eV} \\)</p>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h4>量子数</h4>
+                        <div class="flow-chart">
+                            <div class="flow-item">
+                                <h5>主量子数 \\( n \\)</h5>
+                                <p>取值：\\( n = 1,2,3,\\cdots \\)</p>
+                                <p>决定能量：\\( E_n = -\\frac{13.6}{n^2} \\text{ eV} \\)</p>
+                                <p>决定径向节点数：\\( n-l-1 \\)</p>
+                            </div>
+                            <div class="flow-item">
+                                <h5>角量子数 \\( l \\)</h5>
+                                <p>取值：\\( l = 0,1,2,\\cdots,n-1 \\)</p>
+                                <p>决定轨道角动量：\\( L = \\sqrt{l(l+1)} \\hbar \\)</p>
+                                <p>光谱符号：s(l=0), p(l=1), d(l=2), f(l=3), ...</p>
+                            </div>
+                            <div class="flow-item">
+                                <h5>磁量子数 \\( m_l \\)</h5>
+                                <p>取值：\\( m_l = 0, \\pm 1, \\pm 2, \\cdots, \\pm l \\)</p>
+                                <p>决定角动量的z分量：\\( L_z = m_l \\hbar \\)</p>
+                                <p>决定轨道在空间的取向</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h4>氢原子电子云图</h4>
+                        <p>电子云表示电子在空间中出现的概率密度分布。以下是氢原子3D电子云图：</p>
+                        <div class="electron-cloud-container">
+                            <canvas id="cloud-canvas"></canvas>
+                        </div>
+                        <div class="cloud-controls">
+                            <button id="cloud-s" onclick="setOrbital('s')" class="active">1s 轨道</button>
+                            <button id="cloud-p" onclick="setOrbital('p')">2p 轨道</button>
+                        </div>
+                        <p style="font-size: 0.85rem; color: #888; margin-top: 10px;">提示：拖动鼠标可以旋转视角，按住 Ctrl + 滚轮可缩放</p>
+                    </div>
+                `
+            },
+            modern: {
+                title: '现代方法',
+                content: `
+                    <div class="section">
+                        <h4>有限差分法 (FDM)</h4>
+                        <p>有限差分法将连续的微分方程转化为离散的差分方程，通过网格点上的函数值近似求解。</p>
+                        <div class="derivation-step">
+                            <h5>二阶导数的差分近似</h5>
+                            <p>中心差分公式：\\( \\frac{d^2 \\psi}{dx^2} \\bigg|_{x_i} \\approx \\frac{\\psi_{i+1} - 2\\psi_i + \\psi_{i-1}}{(\\Delta x)^2} \\)</p>
+                        </div>
+                        <p>将一维定态薛定谔方程离散化后，得到一个线性方程组，可通过矩阵对角化求解能量本征值。</p>
+                        <div class="equation-box">
+                            <h5>离散化的薛定谔方程</h5>
+                            <p>\\( -\\frac{\\hbar^2}{2m} \\frac{\\psi_{i+1} - 2\\psi_i + \\psi_{i-1}}{(\\Delta x)^2} + V_i \\psi_i = E \\psi_i \\)</p>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <h4>有限元法 (FEM)</h4>
+                        <p>有限元法将求解区域划分为有限个单元，在每个单元内用基函数（如多项式）近似解，基于伽辽金法将连续本征值问题转化为离散的广义矩阵特征值问题。</p>
+                        <p>优势：适用于不规则边界和复杂几何形状，可自适应加密网格。</p>
+                    </div>
+                    <div class="section">
+                        <h4>物理信息神经网络 (PINN)</h4>
+                        <p>物理信息神经网络将物理方程作为正则化项加入神经网络训练，实现数据驱动的偏微分方程求解。</p>
+                        <div class="equation-box">
+                            <h5>损失函数</h5>
+                            <p>\\( L = L_{data} + \\lambda L_{PDE} + \\mu L_{BC} \\)</p>
+                        </div>
+                        <p>其中：</p>
+                        <ul>
+                            <li>\\( L_{data} \\)：数据拟合损失</li>
+                            <li>\\( L_{PDE} \\)：方程残差损失</li>
+                            <li>\\( L_{BC} \\)：边界条件损失</li>
+                            <li>\\( \\lambda, \\mu \\)：权重系数</li>
+                        </ul>
+                    </div>
+                `
+            }
+        };
+
+        let currentOrbital = 's';
+        let cloudRotation = { x: Math.PI / 6, y: Math.PI / 4 };
+        let cloudScale = 2;
+        let isDragging = false;
+        let lastMousePos = { x: 0, y: 0 };
+        let electronCloudDrawn = false;
+
+        function setOrbital(type) {
+            currentOrbital = type;
+            document.querySelectorAll('.cloud-controls button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`cloud-${type}`).classList.add('active');
+            drawElectronCloud();
+        }
+
+        function drawElectronCloud() {
+            const canvas = document.getElementById('cloud-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const baseRadius = Math.min(canvas.width, canvas.height) * 0.25;
+            const radius = baseRadius * cloudScale;
+
+            ctx.save();
+            ctx.translate(centerX, centerY);
+
+            const particles = [];
+            for (let i = 0; i < 600; i++) {
+                let x, y, z, prob, color;
+
+                if (currentOrbital === 's') {
+                    const r = Math.random() * radius;
+                    const theta = Math.random() * Math.PI * 2;
+                    const phi = Math.acos(2 * Math.random() - 1);
+                    x = r * Math.sin(phi) * Math.cos(theta);
+                    y = r * Math.sin(phi) * Math.sin(theta);
+                    z = r * Math.cos(phi);
+                    prob = Math.exp(-2 * r / radius) * 4 * Math.PI * r * r;
+                    color = z > 0 ? [102, 126, 234] : [118, 75, 162];
+                } else {
+                    const r = Math.random() * radius;
+                    const theta = Math.acos(2 * Math.random() - 1);
+                    const phi = Math.random() * Math.PI * 2;
+                    x = r * Math.sin(theta) * Math.cos(phi);
+                    y = r * Math.sin(theta) * Math.sin(phi);
+                    z = r * Math.cos(theta);
+                    prob = Math.exp(-r / radius) * r * r * Math.sin(theta) * Math.sin(theta);
+                    const sign = Math.cos(theta) > 0 ? 1 : -1;
+                    color = sign > 0 ? [231, 76, 60] : [52, 152, 219];
+                }
+
+                const rotatedX = x * Math.cos(cloudRotation.y) - z * Math.sin(cloudRotation.y);
+                const rotatedZ = x * Math.sin(cloudRotation.y) + z * Math.cos(cloudRotation.y);
+                const rotatedY = rotatedZ * Math.cos(cloudRotation.x) - y * Math.sin(cloudRotation.x);
+
+                const screenX = rotatedX;
+                const screenY = rotatedY;
+                const screenZ = rotatedZ;
+
+                const alpha = Math.min(prob * 0.002, 0.9);
+                const size = Math.max(1.5, prob * 0.01);
+
+                particles.push({ screenX, screenY, screenZ, alpha, size, color, z: rotatedZ });
+            }
+
+            particles.sort((a, b) => a.z - b.z);
+
+            for (const p of particles) {
+                const depthAlpha = p.z > 0 ? p.alpha : p.alpha * 0.3;
+                ctx.fillStyle = `rgba(${p.color[0]}, ${p.color[1]}, ${p.color[2]}, ${depthAlpha})`;
+                ctx.beginPath();
+                ctx.arc(p.screenX, p.screenY, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.strokeStyle = '#4a5568';
+            ctx.lineWidth = 1;
+            const axisLen = radius * 1.3;
+
+            const rotAxX = { x: axisLen, y: 0, z: 0 };
+            const rotAxY = { x: 0, y: axisLen, z: 0 };
+            const rotAxZ = { x: 0, y: 0, z: axisLen };
+
+            const rotX_x = rotAxX.x * Math.cos(cloudRotation.y) - rotAxX.z * Math.sin(cloudRotation.y);
+            const rotX_z = rotAxX.x * Math.sin(cloudRotation.y) + rotAxX.z * Math.cos(cloudRotation.y);
+            const rotX_y = rotX_z * Math.cos(cloudRotation.x) - rotAxX.y * Math.sin(cloudRotation.x);
+
+            const rotY_x = rotAxY.x * Math.cos(cloudRotation.y) - rotAxY.z * Math.sin(cloudRotation.y);
+            const rotY_z = rotAxY.x * Math.sin(cloudRotation.y) + rotAxY.z * Math.cos(cloudRotation.y);
+            const rotY_y = rotY_z * Math.cos(cloudRotation.x) - rotAxY.y * Math.sin(cloudRotation.x);
+
+            const rotZ_x = rotAxZ.x * Math.cos(cloudRotation.y) - rotAxZ.z * Math.sin(cloudRotation.y);
+            const rotZ_z = rotAxZ.x * Math.sin(cloudRotation.y) + rotAxZ.z * Math.cos(cloudRotation.y);
+            const rotZ_y = rotZ_z * Math.cos(cloudRotation.x) - rotAxZ.y * Math.sin(cloudRotation.x);
+
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(rotX_x, rotX_y);
+            ctx.moveTo(0, 0);
+            ctx.lineTo(rotY_x, rotY_y);
+            ctx.moveTo(0, 0);
+            ctx.lineTo(rotZ_x, rotZ_y);
+            ctx.stroke();
+
+            ctx.fillStyle = '#e74c3c';
+            ctx.font = 'bold 12px Arial';
+            ctx.fillText('x', rotX_x + 5, rotX_y + 5);
+
+            ctx.fillStyle = '#2ecc71';
+            ctx.fillText('y', rotY_x + 5, rotY_y + 5);
+
+            ctx.fillStyle = '#3498db';
+            ctx.fillText('z', rotZ_x + 5, rotZ_y + 5);
+
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(0, 0, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+            electronCloudDrawn = true;
+        }
+
+        function initElectronCloud() {
+            const canvas = document.getElementById('cloud-canvas');
+            if (!canvas) return;
+
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+
+            drawElectronCloud();
+
+            canvas.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                lastMousePos = { x: e.clientX, y: e.clientY };
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    cloudRotation.y += (e.clientX - lastMousePos.x) * 0.003;
+                    cloudRotation.x += (e.clientY - lastMousePos.y) * 0.003;
+                    lastMousePos = { x: e.clientX, y: e.clientY };
+                    drawElectronCloud();
+                }
+            });
+
+            canvas.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            canvas.addEventListener('mouseleave', () => {
+                isDragging = false;
+            });
+
+            canvas.addEventListener('wheel', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault();
+                    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                    cloudScale = Math.max(0.5, Math.min(2, cloudScale * delta));
+                    drawElectronCloud();
+                }
+            }, { passive: false });
+        }
+
+        function openModal(section) {
+            const data = modalData[section];
+            document.getElementById('modal-title').textContent = data.title;
+            document.getElementById('modal-body').innerHTML = data.content;
+            document.getElementById('modal').classList.add('active');
+
+            MathJax.typeset();
+
+            if (section === 'simple') {
+                setTimeout(initWaveCanvas, 100);
+            } else if (section === 'comprehensive') {
+                cloudScale = 2;
+                cloudRotation = { x: Math.PI / 6, y: Math.PI / 4 };
+                setTimeout(initElectronCloud, 100);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+            electronCloudDrawn = false;
+        }
+
+        function initWaveCanvas() {
+            const canvas = document.getElementById('wave-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const widthSlider = document.getElementById('width-slider');
+            const widthDisplay = document.getElementById('well-width');
+
+            canvas.width = 600;
+            canvas.height = 320;
+
+            const hbar = 1.0546e-34;
+            const m = 9.1094e-31;
+            const eV_conversion = 1.6022e-19;
+
+            function calculateEnergy(n, L_nm) {
+                const L = L_nm * 1e-9;
+                return (n * n * Math.PI * Math.PI * hbar * hbar) / (2 * m * L * L * eV_conversion);
+            }
+
+            function draw() {
+                const L = parseFloat(widthSlider.value);
+                widthDisplay.textContent = L.toFixed(1);
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const x0 = 80;
+                const x1 = canvas.width - 120;
+                const y0 = canvas.height - 60;
+                const y1 = 60;
+                const wellWidth = x1 - x0;
+                const wellHeight = y0 - y1;
+
+                ctx.strokeStyle = '#667eea';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(x0, y0);
+                ctx.lineTo(x0, y1);
+                ctx.lineTo(x1, y1);
+                ctx.lineTo(x1, y0);
+                ctx.stroke();
+
+                ctx.fillStyle = '#667eea';
+                ctx.globalAlpha = 0.1;
+                ctx.fillRect(x0, y1, wellWidth, wellHeight);
+                ctx.globalAlpha = 1;
+
+                const scaleY = wellHeight / 3.8;
+                const colors = ['#e74c3c', '#2ecc71', '#3498db'];
+
+                const labelX = x1 + 15;
+                const labelWidth = 80;
+
+                for (let n = 1; n <= 3; n++) {
+                    const baseY = y0 - (n - 1) * 50;
+
+                    ctx.strokeStyle = '#ddd';
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([3, 3]);
+                    ctx.beginPath();
+                    ctx.moveTo(x0, baseY);
+                    ctx.lineTo(x1, baseY);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    ctx.beginPath();
+                    ctx.strokeStyle = colors[n-1];
+                    ctx.lineWidth = 2;
+
+                    for (let px = x0; px <= x1; px++) {
+                        const xx = (px - x0) / (x1 - x0);
+                        const k = n * Math.PI / L;
+                        const wave = Math.sin(k * L * xx);
+                        const canvasY = baseY - wave * scaleY / 2;
+
+                        if (px === x0) {
+                            ctx.moveTo(px, canvasY);
+                        } else {
+                            ctx.lineTo(px, canvasY);
+                        }
+                    }
+                    ctx.stroke();
+
+                    const E = calculateEnergy(n, L);
+
+                    ctx.fillStyle = colors[n-1];
+                    ctx.font = 'bold 11px Arial';
+                    ctx.fillText(`n=${n}`, labelX, baseY - 8);
+                    ctx.font = '10px Arial';
+                    ctx.fillText(`E=${E.toFixed(3)} eV`, labelX, baseY + 6);
+
+                    document.getElementById(`energy-n${n}`).textContent = E.toFixed(3);
+                }
+
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(x0 - 5, y0);
+                ctx.lineTo(x1 + 5, y0);
+                ctx.moveTo(x0, y0 + 5);
+                ctx.lineTo(x0, y1 - 5);
+                ctx.stroke();
+
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 11px Arial';
+                ctx.fillText('x (位置)', x1 + 5, y0 + 18);
+                ctx.save();
+                ctx.translate(18, y0 - wellHeight / 2);
+                ctx.rotate(-Math.PI / 2);
+                ctx.fillText('ψ(x) (波函数)', 0, 0);
+                ctx.restore();
+
+                ctx.fillStyle = '#666';
+                ctx.font = '10px Arial';
+                ctx.fillText('0', x0 - 18, y0 + 4);
+                ctx.fillText('L', x1 - 5, y0 + 15);
+                ctx.fillText('势阱区域', x0 + 20, y0 + 15);
+            }
+
+            draw();
+            widthSlider.addEventListener('input', draw);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+                closeTermModal();
+            }
+        });
+    </script>
+</body>
+</html>
